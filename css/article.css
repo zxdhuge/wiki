@@ -93,17 +93,17 @@
 }
 article .container .row img {
   position: relative;
-  left: 25%;
-  margin: 30px auto;
-  max-width: 55% !important;
+  left: 1%;
+  margin: 3px auto;
+  max-width: 90% !important;
   height: auto;
   display: inline-block;
   box-shadow: 0 0 0 5px #fff, 0 0 15px 0 #000;
 }
 @media only screen and (max-width: 768px) {
   article .container .row img {
-    left: 10%;
-    max-width: 80% !important;
+    left: 1%;
+    max-width: 90% !important;
   }
 }
 article .container .row .video-container {
