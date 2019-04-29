@@ -563,7 +563,7 @@ body {
 article .container .row img {
   position: relative;
   left: 1%;
-  margin: 3px auto;
+  margin: 0px auto;
   max-width: 90% !important;
   height: auto;
   display: inline-block;
