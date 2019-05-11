@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="Table of Contents#
+
+
+
+
+
+Basic C++
+
+Some Basic Keywords
+
+C++11 New features
+
+1. auto keyword
+2. for statement
+3. nullptr
+lambda
+
+
+
+
+
+
+Basic C++#
+Some B">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Xiaodong">
+    
+
+    <!-- Title -->
+    
+    <title>Modern C++ | Xiaodong Zhang</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Noto+Serif:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <!-- Content -->
+    <section class="article-container">
+<!-- Back Home -->
+<a class="nav-back" href="/">
+    <i class="fa fa-puzzle-piece"></i>
+</a>
+
+<!-- Page Header -->
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Modern C++</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Main Content -->
+            <div class="post-content col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <h3><span id="table-of-contents">Table of Contents</span><a href="#table-of-contents" class="header-anchor">#</a></h3>
+<div class="tocStart">
+
+</div>
+<!-- toc -->
+<ul>
+<li><a href="#basic-c">Basic C++</a>
+<ul>
+<li><a href="#some-basic-keywords">Some Basic Keywords</a></li>
+</ul></li>
+<li><a href="#c-11-new-features">C++11 New features</a>
+<ul>
+<li><a href="#1-auto-keyword">1. <code>auto</code> keyword</a></li>
+<li><a href="#2-for-statement">2. <code>for</code> statement</a></li>
+<li><a href="#3-nullptr">3. <code>nullptr</code></a></li>
+<li><a href="#lambda">lambda</a></li>
+</ul></li>
+</ul>
+<!-- tocstop -->
+<div class="tocEnd">
+
+</div>
+<h2><span id="basic-c">Basic C++</span><a href="#basic-c" class="header-anchor">#</a></h2>
+<h3><span id="some-basic-keywords">Some Basic Keywords</span><a href="#some-basic-keywords" class="header-anchor">#</a></h3>
+<ul>
+<li><code>const</code></li>
+</ul>
+<p>When defining a class, it's better to use const to declare a member function if that function is not going to change any class memer.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> member1;</span><br><span class="line">    <span class="built_in">string</span> member2;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    MyClass(<span class="keyword">int</span> m1, <span class="built_in">string</span> m2) : member1(m1), member2(m2) &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="comment">//print function is not allowed to change the value of `member1` and `member2`</span></span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"I am "</span> &lt;&lt; member1 &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>We should also be familiar with these statements: <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *str = <span class="string">"Hello, World!"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> * s1 = str; <span class="comment">//things inside of address pointed by s1 cannot be changed</span></span><br><span class="line"><span class="keyword">char</span> * <span class="keyword">const</span> s2 = str; <span class="comment">//s2 can only point to the address when it's initialized</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> * <span class="keyword">const</span> s3 = str; <span class="comment">//combination of the previous two cases</span></span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>static</code></li>
+</ul>
+<p>We can access a static member of a class without having an object of that class. And if we have multiple objects of that class, there would be only one copy of static variables in memory.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    MyClass() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> x;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> MyClass::x = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; MyClass::x &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>If we use static to declare a function, then the function can only be used inside of that file.</p>
+<ul>
+<li>virtual function</li>
+</ul>
+<p>We are not gonna talk about what is virtual function. But it's necessary to come up a case which explains why do we need virtual function. Think about this case: class <code>A</code> has two member functions, <code>func1</code>, <code>func2</code>. The implementation of <code>func2</code>in class <code>A</code> calls <code>func1</code>. Now there is another class <code>B</code> inherited from <code>A</code>, so B also has two member functions. Now assume <code>B</code> want to override <code>func1</code>, then in some cases <code>B</code>'s object calls <code>func2</code>. The result is <code>B</code> cannot get the result of calling the overrided function via <code>func2</code> if <code>func1</code> in class <code>A</code> is not declared as <code>virtual</code>. This example also explains why parent pointer is able to invoke functions in its child. It is feature of virtual function, but not purpose. <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">func1</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        func1();</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> :</span> A &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func1</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    B b_obj;</span><br><span class="line">    b_obj.func();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2><span id="c-11-new-features">C++11 New features</span><a href="#c-11-new-features" class="header-anchor">#</a></h2>
+<h3><span id="1-auto-keyword">1. <code>auto</code> keyword</span><a href="#1-auto-keyword" class="header-anchor">#</a></h3>
+<h3><span id="2-for-statement">2. <code>for</code> statement</span><a href="#2-for-statement" class="header-anchor">#</a></h3>
+<p>Combine the two features together: <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//sample 1</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> x : vec) &#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//sample 2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T1, <span class="keyword">typename</span> T2&gt;</span><br><span class="line">auto compose(T1 t1, T2 t2) -&gt; decltype(t1 + t2)</span><br><span class="line">&#123;</span><br><span class="line">   <span class="keyword">return</span> t1+t2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> v = compose(<span class="number">3</span>, <span class="number">1.2</span>);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; v &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In Sample 2, this part <code>-&gt; decltype(t1 + t2)</code> is necessary, or you will get an error when compile with <code>-std=c++11</code>. However, you do not need this if you are using C++14, which means you can compile it with <code>-std=c++14</code>.</p>
+<h3><span id="3-nullptr">3. <code>nullptr</code></span><a href="#3-nullptr" class="header-anchor">#</a></h3>
+<p>It's the value for <code>NULL</code> pointers. We do not want to use <code>NULL</code> because it can be casted into an integer which sometimes would cause a problem.</p>
+<p>For example: <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> *)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>If we call <code>func(NULL)</code>, we are actually calling the first function where <code>NULL</code> is implicitly converted to integer <code>0</code>. If we call <code>func(nullptr)</code>, it would definitely call the second funciton.</p>
+<h3><span id="lambda">lambda</span><a href="#lambda" class="header-anchor">#</a></h3>
+
+ 
+                <!-- Meta -->
+                <div class="post-meta">
+                    <hr>
+                    <br>
+                    <div class="post-tags">
+                        
+                    </div>
+                    <div class="post-date">
+                        05 / 01 / 2019
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- Disqus Comments -->
+
+
+            </div>
+        </div>
+    </div>
+</article>
+</section>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript">
+	console.log('Hexo-theme-hollow designed by zchen9 🙋 © 2015-' + (new Date()).getFullYear());
+</script>
+
+    <!-- Google Analytics -->
+    
+
+</body>
+
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="Finally I finished the biggest project in Operating Systems CSCI169 at Brown. It took me about two months to finish the job, which is 2500 line of C c">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Xiaodong">
+    
+
+    <!-- Title -->
+    
+    <title>Weenix is Done | Xiaodong Zhang</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Noto+Serif:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <!-- Content -->
+    <section class="article-container">
+<!-- Back Home -->
+<a class="nav-back" href="/">
+    <i class="fa fa-puzzle-piece"></i>
+</a>
+
+<!-- Page Header -->
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Weenix is Done</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Main Content -->
+            <div class="post-content col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p><img src="/img/weenix.png"></p>
+<p>Finally I finished the biggest project in Operating Systems CSCI169 at Brown. It took me about two months to finish the job, which is 2500 line of C code in system level. Not too much, but it makes me feel good when my own operating system can support user level programs successfully.</p>
+<p>project一共分5个assignments，分别是<code>procs</code>, <code>drivers</code>, <code>vfs</code>, <code>s5fs</code>, <code>vm</code>。趁着期末考试之前，把相关内容也总结一下。</p>
+<h3><span id="procs">PROCS</span><a href="#procs" class="header-anchor">#</a></h3>
+<p>主要是实现OS最顶层的process管理，其中包括process和thread的新建与销毁，以及process的调度策略。实现上没有什么难点，因为要求是最简单的功能，不需要考虑preemption，CPU的释放取决于process自己，不依赖与时钟。并且每个process只有一个thread。</p>
+<p>唯一值得关注的，是资源回收的问题。一个process的结束，首先是执行<code>do_exit</code>函数，函数内部调用<code>kthread_exit</code>，之后thread通知process说我结束运行了，你可以把我回收了。这时候process再去执行<code>cleanup</code>。<code>cleanup</code>涉及多项内容处理： 1. 关闭所有该process打开的文件 2. 取消对current working directory的引用（每个进程都有个一个cwd） 3. 销毁virtual memory map. 这个在<code>vm</code>阶段再做说明。 4. 如果这process不是init process（<code>pid=1</code>），那就需要将他所有的子进程转移给init process.</p>
+<p>这四步之后，这个进程自己能做的销毁工作就已经完成了，但是这个进程本身是没有被销毁的（自己无法销毁自己，因为自己必须运行在stack上面），但是它把自己的状态设置成了<code>PROC_DEAD</code>，它的parent process一定在执行<code>do_waitpid</code>等待其子进程的结束，并真正将其释放。</p>
+<p>这里有一个问题，就是init process结束的条件，是只要有一个他的child process结束。这样如果init process有多个child process会发生什么情况？</p>
+<p>剩下的，就是idle process回收init process。</p>
+<p>另一个关注点是scheduler。在<code>sched_switch</code>的时候，需要考虑interrupt的发生及running queue为空的情况。</p>
+<ul>
+<li>对于interrupt，我们在进入<code>sched_switch</code>的时候就需要将interrupt level调成最高，在结束之前再设置成原来的值。</li>
+<li>对于running queue为空的情况，我们应当允许interrupt发生，因为其他进程可能sleep on some waiting queues，interrupt发生了能将唤醒，并重新进入running queue。</li>
+</ul>
+<hr>
+<h3><span id="drivers">DRIVERS</span><a href="#drivers" class="header-anchor">#</a></h3>
+<p>这一块主要实现了两个驱动，一个是disk，一个是tty。</p>
+<ol type="1">
+<li>disk</li>
+</ol>
+<p>实际的磁盘操作也不是我们来实现，调用现成的方法（而且根本看不懂是怎么做的，设计DMA什么的）。这个过程需要了解的是disk的读写操作是异步的。就是任何一个process在进行磁盘操作之前，都会sleep on the disk's waitq。因为磁盘操作很耗时，当操作完成之后，磁盘触发CPU的interrupt，调用我们写的handler将之前进行读写操作的进程唤醒。</p>
+<ol start="2" type="1">
+<li>tty</li>
+</ol>
+<p>这一块的实现就比较有意思了。首先tty的运行机制跟disk是一样的，都是由interrupt驱动。但是相比disk，tty的实现要复杂许多。</p>
+<p>首先每一个tty都是与一个process相关的。我们最终实现了三个tty，对应三个process。每个进程都会尝试去读取用户输入的内容，这个存储用户输入的内容的buffer是由我们维护的。如果进程读不到内容，就会sleep。</p>
+<p>那问题来了，我们怎么读取用户输入的内容呢？通过键盘啊！用户（人类）每按一个按键都会触发一个interrupt，这个interrupt的handler是我们来实现的，处理用户的输入，并显示在终端上给用户看。其中比较关键的是用户输入enter、backspace和ctrl+D的情况。这其中设计循环buffer的设计使用。如果用户输入了enter，就需要将之前sleep的process唤醒，进行处理用户输入的内容。 这个处理可能设计后续shell的操作，因为每个shell会绑定一个tty，用户输入的内容就可以传递到shell进行解析操作了。</p>
+<hr>
+<h3><span id="vfs">VFS</span><a href="#vfs" class="header-anchor">#</a></h3>
+<hr>
+<h3><span id="s5fs">S5FS</span><a href="#s5fs" class="header-anchor">#</a></h3>
+<hr>
+<h3><span id="vm">VM</span><a href="#vm" class="header-anchor">#</a></h3>
+<p>First, let's talk about how does the CPU get a phyical memory address. CPU is executing instructions, now it gets a virtual address. It needs to be translated into a physical address to get the true value. So CPU first looks up the TLB (it's a cache of page table inside of CPU). If the entry exists, job is done. If not, then it goes on the search the page table in main memory. The physical address of page table is stored in a register call <code>CR3</code>, so there is no need to translate it. If it finds the entry in the page table, job is done, and TLB is updated. If not, it goes to page fault hander by sending an interrupt to CPU, and the handler is implemented by us. All these searching jobs are done by a hardware call <code>MMU</code>.</p>
+
+ 
+                <!-- Meta -->
+                <div class="post-meta">
+                    <hr>
+                    <br>
+                    <div class="post-tags">
+                        
+                    </div>
+                    <div class="post-date">
+                        04 / 29 / 2019
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- Disqus Comments -->
+
+
+            </div>
+        </div>
+    </div>
+</article>
+</section>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script type="text/javascript">
+	console.log('Hexo-theme-hollow designed by zchen9 🙋 © 2015-' + (new Date()).getFullYear());
+</script>
+
+    <!-- Google Analytics -->
+    
+
+</body>
+
+</html>

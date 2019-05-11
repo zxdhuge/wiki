@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="Linear Predictors
+
+Halfspace
+Linear Regression
+Polynomial Regression
+Logistic Regression
+
+Other models
+
+Naive Bayes
+Support Vector Machines
+Decision T">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Xiaodong">
+    
+
+    <!-- Title -->
+    
+    <title>Machine Learning 2019 @ Brown | Xiaodong Zhang</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Noto+Serif:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <!-- Content -->
+    <section class="article-container">
+<!-- Back Home -->
+<a class="nav-back" href="/">
+    <i class="fa fa-puzzle-piece"></i>
+</a>
+
+<!-- Page Header -->
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Machine Learning 2019 @ Brown</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Main Content -->
+            <div class="post-content col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="tocStart">
+
+</div>
+<!-- toc -->
+<ul>
+<li><a href="#linear-predictors">Linear Predictors</a>
+<ul>
+<li><a href="#halfspace">Halfspace</a></li>
+<li><a href="#linear-regression">Linear Regression</a></li>
+<li><a href="#polynomial-regression">Polynomial Regression</a></li>
+<li><a href="#logistic-regression">Logistic Regression</a></li>
+</ul></li>
+<li><a href="#other-models">Other models</a>
+<ul>
+<li><a href="#naive-bayes">Naive Bayes</a></li>
+<li><a href="#support-vector-machines">Support Vector Machines</a></li>
+<li><a href="#decision-trees">Decision Trees</a></li>
+</ul></li>
+<li><a href="#learning-theories">Learning theories</a>
+<ul>
+<li><a href="#pac-learning">PAC Learning</a></li>
+<li><a href="#vc-dimension">VC-Dimension</a></li>
+<li><a href="#bias-complexity">Bias-Complexity</a></li>
+</ul></li>
+<li><a href="#clustering-algorithms">Clustering Algorithms</a>
+<ul>
+<li><a href="#k-nearest-neighbors">K-Nearest Neighbors</a></li>
+<li><a href="#k-means">K-Means</a></li>
+<li><a href="#expectation-maximization">Expectation Maximization</a></li>
+<li><a href="#principal-component-analysis">Principal Component Analysis</a></li>
+</ul></li>
+</ul>
+<!-- tocstop -->
+<div class="tocEnd">
+
+</div>
+<p>Basicly, this course focuses on supervised learning all through the semester. I'm writing this note in order to give myself a deeper understanding of all these stuffs.</p>
+<h2><span id="linear-predictors">Linear Predictors</span><a href="#linear-predictors" class="header-anchor">#</a></h2>
+<h3><span id="halfspace">Halfspace</span><a href="#halfspace" class="header-anchor">#</a></h3>
+<p><span class="math display">\[ h_w(x) = \langle w,x \rangle + b \]</span></p>
+<p>b is bias. We can write simpler if we append a <code>1</code> at the end of each $ x $ and append <code>b</code> to the end of $ w $:</p>
+<p><span class="math display">\[ h_w(x) = sign(\langle w,x \rangle) \]</span></p>
+<h4><span id="perceptron-algorithm">Perceptron Algorithm</span><a href="#perceptron-algorithm" class="header-anchor">#</a></h4>
+<p>It's an iterative algorithm that goes through all samples repeatly until convergence. Everytime it meets a falsely classified data $ x $, update $ w $ as:</p>
+<p><span class="math display">\[ w^{t+1} = w^{t} + y_ix_i \]</span></p>
+<p>$ y_i $ is the true lable for $ x_i $.</p>
+<h3><span id="linear-regression">Linear Regression</span><a href="#linear-regression" class="header-anchor">#</a></h3>
+<p><span class="math display">\[ h_w(x) = \langle w,x \rangle \]</span></p>
+<p>Bias included. The output of $ h_w(x) $ is our prediction, it's a real number in most cases.</p>
+<h4><span id="loss-function">Loss function</span><a href="#loss-function" class="header-anchor">#</a></h4>
+<p>Usually we use mean squared loss in linear regression problems:</p>
+<p><span class="math display">\[ L_S(h_w) = \frac{1}{m}\sum_{i=1}^{m}\left( h_w(x_i) - y_i \right)^2 \]</span></p>
+<p>How to find the $ w $ that has a minimum loss with the previous formula?</p>
+<ul>
+<li>Least Squares</li>
+</ul>
+<p>Set the derivative of $ L_S(h_w) $ on $ w $ to zero:</p>
+<p><span class="math display">\[ \frac{\partial{L_S(h_w)}}{\partial{w}} = \frac{2}{m}\sum_{i=1}^{m}\left( \langle w,x \rangle - y_i \right)x_i = 0 \]</span></p>
+<p>Denote $ A $ and $ b $ as:</p>
+<p><span class="math display">\[ A = \left( \sum_{i=1}^{m}x_i x_i^T \right) \]</span> <span class="math display">\[ b = \left( \sum_{i=1}^{m}y_i x_i \right) \]</span></p>
+<p>We have:</p>
+<p><span class="math display">\[ Aw = b \]</span></p>
+<p>If $ A $ is invertible, $ w = A^{-1}b $ If not, $ w = A^{+}b $. So, how to compute $ A^+ $?</p>
+<ul>
+<li>Gradient Decent</li>
+</ul>
+<p>An iterative algorithm pretty like the perceptron algorithm.</p>
+<p><span class="math display">\[ w^{&#39;} = w - \alpha \frac{\partial{L_S(h_w)}}{\partial{w}} \]</span></p>
+<h3><span id="polynomial-regression">Polynomial Regression</span><a href="#polynomial-regression" class="header-anchor">#</a></h3>
+<p>Assume it's a $ m $ degree polynomial regression problem:</p>
+<p>If we only have one feature:</p>
+<p><span class="math display">\[ y = b_0 + b_1x + b_2x^2 + ... + b_mx^m \]</span></p>
+<p>If we have two features:</p>
+<p><span class="math display">\[ y = b_0 + b_1x_1 + b_2x_2 + b_3x_1^2 + b_4x_2^2 + b_5x_1x_2 + ... \]</span></p>
+<p>If we have more than two features, I don't want to write it any more!</p>
+<h3><span id="logistic-regression">Logistic Regression</span><a href="#logistic-regression" class="header-anchor">#</a></h3>
+<p>It's used for classification.</p>
+<h4><span id="binary-class">binary class</span><a href="#binary-class" class="header-anchor">#</a></h4>
+<p><span class="math display">\[ h_w(x) = \frac{1}{1+e^{-\langle w,x \rangle}} \]</span></p>
+<p>This is the form of sigmoid function. When $ w,x $ is greater than zero, the output is greater than $ 0.5 $, it means we should classify $ x $ as a positive sample. Otherwise, we classify it negative.</p>
+<p>As the output of $ h_w(x) $ is a real number between 0 and 1 (it always represents the probability of $ x_i $ is positve), it's better to use negative log loss to represent to optimization problem.</p>
+<p>Here we need to consider two cases:</p>
+<ul>
+<li><ol type="1">
+<li>labels are {0, 1}</li>
+</ol></li>
+</ul>
+<p><span class="math display">\[ L_S(h_w) = -\frac{1}{m}\sum_{i=1}^{m}\left(y_i\log(h_w(x_i)) + (1-y_i)\log(1-h_w(x_i))\right)\]</span></p>
+<ul>
+<li><ol start="2" type="1">
+<li>labels are {-1, 1}</li>
+</ol></li>
+</ul>
+<p><span class="math display">\[ L_S(h_w) = \frac{1}{m}\sum_{i=1}^{m}\log(1+\exp(-y_i\langle w,x \rangle)) \]</span></p>
+<p>We can use gradient decent algorithm to solve the problem. But I don't want to write their derivatives!</p>
+<h4><span id="multiclass">multiclass</span><a href="#multiclass" class="header-anchor">#</a></h4>
+<p><span class="math display">\[ h_w(x) = \frac{e^{\langle w,x \rangle}}{\sum_{c=1}^{k}e^{\langle w,x \rangle}} \]</span></p>
+<p>Here $ k $ is the number of classes.</p>
+<h4><span id="loss-function">loss function</span><a href="#loss-function" class="header-anchor">#</a></h4>
+<p><span class="math display">\[ L_S(h_w) = -\frac{1}{m}\sum_{i=1}^{m}\sum_{c=1}^{k}1[y_i = c]\log(h_w(x_i)_c) \]</span></p>
+<p>Here $ h_w(x_i)_c $ is the probability of $ x_i $ belonging to category $ c $. $ 1[y_i = c] $ means this part is 1 if $ y_i = c $, otherwise it's 0.</p>
+<h2><span id="other-models">Other models</span><a href="#other-models" class="header-anchor">#</a></h2>
+<h3><span id="naive-bayes">Naive Bayes</span><a href="#naive-bayes" class="header-anchor">#</a></h3>
+<p>It's so simple, do we need to talk about it any more?</p>
+<p>The biggest sometime unreasonable presumption when using Naive Bayes is all features are independent.</p>
+<h3><span id="support-vector-machines">Support Vector Machines</span><a href="#support-vector-machines" class="header-anchor">#</a></h3>
+<h4><span id="hard-svm-realizable">Hard-SVM (realizable)</span><a href="#hard-svm-realizable" class="header-anchor">#</a></h4>
+<p>First, SVM is algorithm that solves binary classification problem. It returns a halfspace. The difference between SVM and the general halfspace is that SVM tries to find a halfspace that seperates samples with the largest possible margin. So what is margin? Margin is the minimum distance between a point in the training set and the hyperplane. Let's talk about the distance between a point and the hyperplane first. Say the hyperplane is represented as:</p>
+<p><span class="math display">\[ \langle w,x \rangle + b = 0 \]</span></p>
+<p>Here $ w $ is a vector with length 1, and b is bias.</p>
+<p>Now for any point $ x $, the distance from $ x $ to this hyperplane is:</p>
+<p><span class="math display">\[ | \langle w,x \rangle + b | = |w||x|\cos(\theta) + b \]</span></p>
+<p>The inner product of $ w $ and $ x $ can be treated as a projection of $ x $ to $ w $.</p>
+<p>Then the problem becomes to find a hyperplane that those points with the minimum distance to the hyperplane have the maximum distance.</p>
+<p><span class="math display">\[ arg\max_w \min_{i \in m} y_i(\langle w,x_i \rangle + b) \]</span></p>
+<p>It's a quadratic optimization problem now. We have sufficient tool that can solve quadratic problems for us. What we need to do is generate those variables that are needed to be send into the QP function.</p>
+<p>TODO: Math problem...</p>
+<p><strong>We Cannot Use SGD to Solve Hard-SVM Problem</strong></p>
+<h4><span id="soft-svm-unrealizable">Soft-SVM (unrealizable)</span><a href="#soft-svm-unrealizable" class="header-anchor">#</a></h4>
+<p>The contraints in Hard-SVM is:</p>
+<p><span class="math display">\[ y_i(\langle w,x \rangle + b) \ge 1 \]</span></p>
+<p>We introduce $ m $ nonnegative slack variables <span class="math display">\[ \xi_1 , ...,  \xi_m \]</span></p>
+<p>and relax the contraints as</p>
+<p><span class="math display">\[ y_i(\langle w,x \rangle + b) \ge 1 - \xi_i \]</span></p>
+<p><strong>We Can Use SGD to Solve Soft-SVM Problem</strong> (minimize hinge loss)</p>
+<h4><span id="kernels">Kernels</span><a href="#kernels" class="header-anchor">#</a></h4>
+<p>Different definitions of distance between two points.</p>
+<blockquote>
+<p>kernel gallery:http://crsouza.com/2010/03/17/kernel-functions-for-machine-learning-applications/</p>
+</blockquote>
+<ul>
+<li>Polynomial Kernel</li>
+</ul>
+<p><span class="math display">\[ K(x, y) = (c_1 \langle x,y \rangle + c_2)^{c_3} \]</span></p>
+<p>If $ c_3 = 1$, it is a linear kernel.</p>
+<ul>
+<li>Gaussian Kernel</li>
+</ul>
+<p><span class="math display">\[ K(x, y) = \exp(\frac{-||x-y||^2}{c^2}) \]</span></p>
+<ul>
+<li>Sigmoind Kernel</li>
+</ul>
+<p><span class="math display">\[ K(x, y) = tanh(\alpha x^Ty + c) \]</span></p>
+<h3><span id="decision-trees">Decision Trees</span><a href="#decision-trees" class="header-anchor">#</a></h3>
+<p>The concept of decision tree is simple, the tricky part is how to build the decision tree. In class we talked about the greedy algorithm which minimize the gain in each step.</p>
+<ul>
+<li>build tree (ID3)</li>
+</ul>
+<p>First, the tree is empty, and we get a set of samples with size $ m $, each sample has $ d $ features. The current working node is root. We are going to build the subtree with the same principles until there is no more samples or no features to split on, or all samples are in the same label.</p>
+<p>If we can split on this node, we will check all features to find the one that we have the maximum information gain.</p>
+<p>Assume we are doing binary classification. On the current process, <code>data</code> is the set of samples we are going to split, and <code>i</code> is a feature index. If we split on this feature, the information gain is:</p>
+<p><span class="math display">\[ gain(p(y_i = 1)) - p(x_i = True) * gain(p(y_i = 1 | x_i = True) + p(x_i = False) * gain(p(y_i = 1 | x_i = False)) \]</span></p>
+<p>$ gain $ is pre-defined gain function such as <code>train error</code>, <code>entropy</code>, <code>gini index</code>.</p>
+<ul>
+<li>prune tree</li>
+</ul>
+<p>We need to prune a decision tree because it may overfit. The rule for deleting a node is whether we can reduce validation error.</p>
+<p>The pruning algorithm we implemented does only prune those nodes that both of its children are leaf nodes or one of them is a leaf node and the other is empty.</p>
+<h4><span id="other-decision-tree-algorithms">Other Decision Tree Algorithms</span><a href="#other-decision-tree-algorithms" class="header-anchor">#</a></h4>
+<ul>
+<li>CART</li>
+<li>C4.5</li>
+</ul>
+<p>The difference between these two algorithms and ID3 is how they choose the target attribute to split on. ID3 chooses the biggest information gain, while CART chooses the minimum gini index, and C4.5 chooses information gain ratio as an indicator. Both CART and C4.5 can be used to do a regression problem.</p>
+<h2><span id="learning-theories">Learning theories</span><a href="#learning-theories" class="header-anchor">#</a></h2>
+<h3><span id="pac-learning">PAC Learning</span><a href="#pac-learning" class="header-anchor">#</a></h3>
+<p>What's PAC Learning? PAC learnability is a property of a hypothesis class on a specific data distribution. We say a hypothesis $ H $ is PAC learnable means if we have $ m $ training samples, it would be sufficient to guarantee that the overall loss is smaller than <code>epislon</code> with probability greater than <code>1-delta</code>.</p>
+<p>So how can we use PAC Learnability to analysis a learning problem?</p>
+<ul>
+<li>If we have a set of training sample, we can estimate the accuracy with the given hypothesis class and a give confidence value <code>delta</code>. Or we can estimate the confidence of getting the given accuracy in the hypothesis class.</li>
+<li>If we are given a requirement about accuracy and confidence, we can use PAC learnability to tell us how many samples we need to achieve the goal.</li>
+</ul>
+<h4><span id="realizable-case">realizable case</span><a href="#realizable-case" class="header-anchor">#</a></h4>
+<p>The presumpthion is that we can get a zero loss on this data distribution, and the hypothesis class is finite. Then the relation between <code>epsilob</code> (accuracy), <code>delta</code> (confidence), size of hypothesis class, and sample complexity is:</p>
+<p><span class="math display">\[ m_H(\epsilon, \delta) \le \lceil \frac{log(|H|/\delta)}{\epsilon} \rceil \]</span></p>
+<h4><span id="uniform-convergence">uniform convergence</span><a href="#uniform-convergence" class="header-anchor">#</a></h4>
+<p>How can we eveluate the effectiveness of the ERM solution we get from the data set $ S $? If $ S $ is a good representation of distribution $ D $, then the ERM is good. How can we say a sample is representive?</p>
+<p>If for any hypothesis $ h $ in $ H $:</p>
+<p><span class="math display">\[ |L_S(h) - L_D(h)| \le \epsilon \]</span></p>
+<p>We say data set $ S $ is <code>epsilon</code>-representative. Then if a data set $ S $ is <code>epsilon/2</code>-representative:</p>
+<p><span class="math display">\[ L_D(h_S) \le \min_{h\in H}L_D(h) + \epsilon \]</span></p>
+<p>Now we come to the uniform convergence property. It's a property of a hypothesis class which represents the confidence of data set $ S $ is <code>epsilon</code>-representative.</p>
+<p><span class="math display">\[ m_H^{UC}(\epsilon, \delta) \le \lceil \frac{log(2|H|/\delta)}{2\epsilon^2} \rceil \]</span></p>
+<p>It has almost the same meaning forms with PAC learnability.</p>
+<h4><span id="unrealizable-case">unrealizable case</span><a href="#unrealizable-case" class="header-anchor">#</a></h4>
+<p>Here we do not assume we can find a hypothesis that perfectly works on the data set. We need to consider the representativeness of a data set.</p>
+<p><span class="math display">\[ m_H(\epsilon, \delta) \le m_H^{UC}(\epsilon/2, \delta) \le \lceil \frac{log(2|H|/\delta)}{\epsilon^2} \rceil \]</span></p>
+<h3><span id="vc-dimension">VC-Dimension</span><a href="#vc-dimension" class="header-anchor">#</a></h3>
+<p>Pretty simple concept.</p>
+<h3><span id="bias-complexity">Bias-Complexity</span><a href="#bias-complexity" class="header-anchor">#</a></h3>
+<p>Suppose we get a ERM solution $ h_S $. We use this hypothesis to test our testing data and get a loss value. The result can be divided into two parts:</p>
+<p><span class="math display">\[ L_D(h_S) = \epsilon_{app} + \epsilon_{est} \]</span></p>
+<ul>
+<li>approximation error: it's bias because we choose the set of hypothesis. Even if we choose the best hypothesis in $ H $, this error cannot be eliminated.</li>
+</ul>
+<p><span class="math display">\[ \epsilon_{app} = \min_{h\in H}L_D(h) \]</span></p>
+<p>How to improve: increase the size of hypothesis class (it's more possible to get a good hypothesis). Or choose some other features for the data set.</p>
+<ul>
+<li>estimation error: it's normal to get an estimation error. But if it's pretty high, it means our model is overfitting.</li>
+</ul>
+<p>How to improve: get more training samples, or reduce the size of hypothesis class.</p>
+<h4><span id="regularization">Regularization</span><a href="#regularization" class="header-anchor">#</a></h4>
+<p>A mechanism used to prevent overfitting. When we are doing optimization, we do only care about the training loss before. Now we add another component into the optimization function which represents the complexity of hypothesis class.</p>
+<p>How to set the value?</p>
+<ul>
+<li>Tikhonov Regularization</li>
+</ul>
+<p><span class="math display">\[ R(w) = \lambda||w||_2^2 \]</span></p>
+<h4><span id="boosting">Boosting</span><a href="#boosting" class="header-anchor">#</a></h4>
+<p>We want to use boosting because in regularization we already <code>lambda</code> to zero while the approximation error is still very high. Then we combine several hypotheses together, and consider each vote to determine the final label. We say the single hypothesis used in boosting is <code>weak learner</code>, and the combined hypothesis is <code>strong learner</code>.</p>
+<ul>
+<li>AdaBoost</li>
+</ul>
+<p>We have a set of samples, each sample has an initial weight. Let's denote the initial weight list as $ D^0 $. We have a weak learner, which will return a hypothesis with $ D $ and $ S $. Then we will go several iterations to update $ D $ and get a list of hypothesis. Finally we will use the set of hypotheses to predict testing samples.</p>
+<p>The meaning of $ D $ in each iteration is that if we correctly classified the sample, the weight of sample would decrease. Otherwise the weight increases. It makes sure that we will focus more on the falsely classified samples. Each hypothesis also has a weight which is represented by the training error in that iteration. So the final predication is an average sum of all predictions from all hypotheses.</p>
+<h2><span id="clustering-algorithms">Clustering Algorithms</span><a href="#clustering-algorithms" class="header-anchor">#</a></h2>
+<h3><span id="k-nearest-neighbors">K-Nearest Neighbors</span><a href="#k-nearest-neighbors" class="header-anchor">#</a></h3>
+<p>For every sample in the training set, the 1-Nearest Neighbor is the sample itself. So the VC Dimension of 1-Nearest Neighbor Algorithm is infinite.</p>
+<p>The algorithm is so simple that I cannot find anything to write.</p>
+<p>If we have $ m $ training samples, the time complexity of classifying one test sample is $ O(mlogk) $</p>
+<h3><span id="k-means">K-Means</span><a href="#k-means" class="header-anchor">#</a></h3>
+<p>First we need to choose k centroids randomly from m samples.</p>
+<p>Then iteratively go through all samples, assign the label of its nearest centroid to the sample, and after that, update centroids by averaging all samples in the same cluster.</p>
+<p>The stopping condition is if the different between the current centroids and the new centroids is smaller than a constant value.</p>
+<p>We have several choices for distance functions:</p>
+<ul>
+<li>Euclidean Distance</li>
+<li>Manhattan Distance</li>
+<li>Chebychev Distance</li>
+</ul>
+<h3><span id="expectation-maximization">Expectation Maximization</span><a href="#expectation-maximization" class="header-anchor">#</a></h3>
+<p>The problem that EM algorithm tries to solve is that we get some data samples, assuming they are belonging to k different Gaussians distributions. We do not know the labels of each data, but we want to prediction the means and variances of these Gaussians distributions such that we get the highest probability to get the data samples we have.</p>
+<p>First, we should generate random values for all parameters for those distritbutions. Then this algorithm can be divided into two steps:</p>
+<ul>
+<li>Expectation step:</li>
+</ul>
+<p>For each sample, compute the probabilities of the sample belonging to each distributions. We need the prior probabilities $ p(c) $, and then for sample $ x $, the probability of $ x $ belonging to $ c $ is:</p>
+<p><span class="math display">\[ p(c\ |\ x) \approx p(c)*p(x\ |\ c) \]</span></p>
+<p>When computing $ p(x | c) $, we are using the parameters of $ c $ in the current iteration. We will update the parameters in M step.</p>
+<ul>
+<li>Maximization step:</li>
+</ul>
+<p>Now we have labeled all samples. We can use the samples in each cluster to compute its mean and variance.</p>
+<p><span class="math display">\[ \mu_c = \frac{\sum_{i=1}^{m}x_ip(c\ |\ x_i)}{\sum_{i=1}^{m}p(c\ |\ x_i)} \]</span></p>
+<p>Here $ p(c | x_i) $ is the value from E step after normalization.</p>
+<p><span class="math display">\[ \sigma_c^2 = \frac{\sum_{i=1}^{m}p(c\ |\ x_i)(x_i - \mu_c)(x_i - \mu_c)^T}{\sum_{i=1}^{m}p(c\ |\ x_i)}\]</span></p>
+<p>In addition to updating mean and variance, we should also update the prior probabilities:</p>
+<p><span class="math display">\[ p(c) = \frac{\sum_{i=1}^{m}p(c\ |\ x_i)}{m}\]</span></p>
+<blockquote>
+<p>A detailed explanation can be found here: https://www.youtube.com/channel/UCs7alOMRnxhzfKAJ4JjZ7Wg</p>
+</blockquote>
+<h3><span id="principal-component-analysis">Principal Component Analysis</span><a href="#principal-component-analysis" class="header-anchor">#</a></h3>
+<p>PCA is an algorithm projecting $ d $ dimension samples into a lower dimension subspace with a minimum information loss.</p>
+<p>The definition of information loss:</p>
+<p><span class="math display">\[ loss = \sum_{i=1}^{m}||x_i - UU^Tx_i||_2^2 \]</span></p>
+<p>Assume we want to reduce the dimension from $ d $ to $ n $, then here $ U $ is a $ d*n $ matrix, and we have $ U^TU = I $.</p>
+<p>The problem is to find $ n $ principal components $ u_1 $, ..., $ u_n $</p>
+<p>Let's assume we have $ m $ training samples:</p>
+<ul>
+<li>If $ m &gt; d $</li>
+</ul>
+<p><span class="math display">\[ A = X^TX \]</span></p>
+<p>Let $ u_1 $, ..., $ u_n $ be the eigenvectors of A with largest eigenvalues.</p>
+<ul>
+<li>If $ m &lt;= d $</li>
+</ul>
+<p><span class="math display">\[ B = XX^T \]</span></p>
+<p>Let $ v_1 $, ..., $ v_n $ be the eigenvectors of B with largest eigenvalues. For each $ v_i $, we get a corresponding $ u_i $:</p>
+<p><span class="math display">\[ u_i = \frac{1}{||X^Tv_i||}X^Tv_i\]</span></p>
+
+ 
+                <!-- Meta -->
+                <div class="post-meta">
+                    <hr>
+                    <br>
+                    <div class="post-tags">
+                        
+                    </div>
+                    <div class="post-date">
+                        05 / 10 / 2019
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- Disqus Comments -->
+
+
+            </div>
+        </div>
+    </div>
+</article>
+</section>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script type="text/javascript">
+	console.log('Hexo-theme-hollow designed by zchen9 🙋 © 2015-' + (new Date()).getFullYear());
+</script>
+
+    <!-- Google Analytics -->
+    
+
+</body>
+
+</html>
